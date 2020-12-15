@@ -9,7 +9,9 @@ from matplotlib import style
 
 style.use("ggplot")
 
-df =quandl.get("WIKI/GOOGL")
+df = quandl.get("WIKI/GOOGL")
+df.to_csv("Google_Stocks.csv")
+df = pd.read_csv("Google_Stocks.csv", index_col="Date")
 
 col = df.columns
 
