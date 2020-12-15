@@ -47,6 +47,10 @@ X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_siz
 clf = LinearRegression(n_jobs=-1) #n_jobs=-1 =>use all processing power for other values it represents parallel threads
 
 clf.fit(X_train,y_train)
+with open("linearregression.pickle","wb") as f:
+    pickle.dump(clf,f)
+pickle_in = open("linearregression.pickle","rb")
+clf = pickle.load(pickle_in)
 
 accuracy = clf.score(X_test,y_test)
 print(accuracy) 
