@@ -8,7 +8,7 @@ style.use("ggplot")
 class SupportVectorMachine:
     def __init__(self, data, visualization=True):
         self.visualization = visualization
-        self.colors = {1: "r", -1: "b"}
+        self.colors = {1: "r", -1: "b"}  # color coding
         self.data = data
         self.min_feature_value = 0
         self.max_feature_value = 0
@@ -25,21 +25,16 @@ class SupportVectorMachine:
                       [-1, 1],
                       [-1, -1]]
 
-        all_data = []
-        for yi in self.data:
-            for featureset in self.data[yi]:
-                for feature in featureset:
-                    all_data.append(feature)
-        self.max_feature_value = max(all_data)
-        self.min_feature_value = min(all_data)
+        self.max_feature_value = max(np.amax(self.data[-1]), np.amax(self.data[1]))
+        self.min_feature_value = min(np.amin(self.data[-1]), np.amin(self.data[1]))
 
         step_sizes = [self.max_feature_value * 0.1,
                       self.max_feature_value * 0.01,
                       self.max_feature_value * 0.001]
 
-        b_range_multiple = 5
-        b_multiple = 5
-        latest_optimum = self.max_feature_value * 10
+        b_range_multiple = 1  # most computationally expensive
+        b_multiple = 5  # b steps are not as small as for w
+        latest_optimum = self.max_feature_value * 10  # cutting corners to get starting w
 
         for step in step_sizes:
             w = np.array([latest_optimum, latest_optimum])
@@ -51,11 +46,10 @@ class SupportVectorMachine:
                     for transformation in transforms:
                         w_t = w * transformation
                         found_option = True
-                        for i in self.data:
-                            for xi in self.data[i]:
-                                yi = i
+                        for yi in self.data:
+                            for xi in self.data[yi]:
                                 if not yi * (np.dot(w_t, xi) + b) >= 1:
-                                    found_option = False
+                                    found_option = False  # w_t and b should not fail even for a single data point
                         if found_option:
                             opt_dict[np.linalg.norm(w_t)] = [w_t, b]
                 if w[0] < 0:
